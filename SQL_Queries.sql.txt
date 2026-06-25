@@ -1,0 +1,46 @@
+-- HR Analytics Project
+-- Tool: MySQL
+-- Dataset: IBM HR Analytics Employee Attrition
+
+-- Query 1: Overall Attrition Rate
+SELECT 
+  COUNT(*) AS total_employees,
+  SUM(CASE WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) AS left_company,
+  ROUND(SUM(CASE WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS attrition_rate
+FROM `wa_fn-usec_-hr-employee-attrition11`;
+
+-- Query 2: Attrition by Department
+SELECT Department,
+  COUNT(*) AS total,
+  SUM(CASE WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) AS left_count,
+  ROUND(SUM(CASE WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS dept_attrition_rate
+FROM `wa_fn-usec_-hr-employee-attrition11`
+GROUP BY Department
+ORDER BY dept_attrition_rate DESC;
+
+-- Query 3: Salary vs Attrition
+SELECT Attrition,
+  ROUND(AVG(MonthlyIncome), 2) AS avg_salary
+FROM `wa_fn-usec_-hr-employee-attrition11`
+GROUP BY Attrition;
+
+-- Query 4: Age Group vs Attrition
+SELECT 
+  CASE 
+    WHEN Age < 25 THEN 'Under 25'
+    WHEN Age BETWEEN 25 AND 35 THEN '25-35'
+    WHEN Age BETWEEN 36 AND 45 THEN '36-45'
+    ELSE '45+' 
+  END AS age_group,
+  COUNT(*) AS total,
+  SUM(CASE WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) AS left_count,
+  ROUND(SUM(CASE WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS attrition_rate
+FROM `wa_fn-usec_-hr-employee-attrition11`
+GROUP BY age_group
+ORDER BY attrition_rate DESC;
+
+-- Query 5: Job Satisfaction vs Attrition
+SELECT JobSatisfaction, Attrition, COUNT(*) AS count
+FROM `wa_fn-usec_-hr-employee-attrition11`
+GROUP BY JobSatisfaction, Attrition
+ORDER BY JobSatisfaction;
